@@ -1,0 +1,21 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  validate-sitemap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: pip install lxml
+      - name: Validate sitemap
+        run: |
+          python -c "from lxml import etree; import sys; p='start_kit/site_seo/sitemap.generated.xml';
+try:
+    etree.parse(p); print('SITEMAP_OK')
+except Exception as e:
+    print('SITEMAP_INVALID', e, file=sys.stderr); sys.exit(2)"
